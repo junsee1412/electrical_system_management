@@ -1,0 +1,20 @@
+Khối xử lý trung tâm:
+- Switch:
+    + Nhận tín hiệu từ Server hoặc nút nhấn sau đó chuyển tín hiệu đến Khối hiển thị trạng thái.
+    + Gửi tín hiệu trạng thái đến Server.
+- Device:
+    + Nhận tín hiệu từ Server sau đó chuyển tín hiếu đến khối công suất thực thi.
+- Sensor:
+    + Gửi tín hiệu nhiệt độ, độ ẩm đến Server.
+
+Khối nguồn:
+Cấp nguồn cho toàn mạch, sử dụng nguồn 3.3v cho khối xử lý trung tâm, khối hiển thị trạng thái; nguồn 5.0v cho relay.
+
+Khối ngõ ra công suất:
+Đóng ngắt các tiếp điểm relay theo sự điều khiển của khối xử lý trung tâm từ đó điều khiển các thiết bị điện 220V-AC, cách ly mạch công suất và mạch điều khiển.
+
+Khối hiển thị trạng thái:
+Nhận tín hiệu từ khối xử lý trung tâm và hiển thị hai trạng thái bật tắt.
+
+Khối cảm biến:
+Gửi tín hiệu nhiệt độ, độ ẩm đến khối xử lý trung tâm.

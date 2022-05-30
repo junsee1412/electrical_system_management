@@ -1,0 +1,16 @@
+trong mạch module công tắc:
+
+GND mạch nối với GND ESP-01, cathonde led hiển thị trạng thái, công tắc reset.
+RST ESP-01 nối với chân còn lại của công tắc reset.
+Anode led hiển thị trạng thái nối với IO-02 ESP-01.
+VCC nối với VCC 3.3v ESP-01, Nút nhấn.
+Chân còn lại Nút nhấn nối với IO-01 ESP-01
+
+
+trong mạch module thiết bị:
+
+GND mạch nối với GND ESP-01, DC- Relay, công tắc reset.
+RST ESP-01 nối với chân còn lại của công tắc reset.
+IO-02 ESP-01 nối với IN Relay.
+VCC 3.3v nối với VCC 3.3v ESP-01.
+VCC 5v nối với DC+ Relay.
