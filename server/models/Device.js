@@ -10,6 +10,11 @@ const DeviceSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+    state: {
+        type: Boolean,
+        default: false,
+        required: true,
+    },
     connect: {
         type: Array,
         required: true,

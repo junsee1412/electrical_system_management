@@ -13,14 +13,20 @@ router.get("/", async (req, res) => {
   }
 })
 
-router.get("/scan", (req, res) => {
+router.get("/scan", async (req, res) => {
+  const inDB = await Device.find()
+  let macInDB = []
+  for (i in inDB) {
+    macInDB.push(inDB[i].mac)
+  }
   let device = []
+  
   const options = {
     target: "192.168.1.0/24",
     port: "80",
   }
-  const evilscan = new Evilscan(options)
-  evilscan.on('result', (data) => {
+  const evilscan = await new Evilscan(options)
+  await evilscan.on('result', (data) => {
     if (data.ip != '192.168.1.1') {
       device.push(data)
     }
@@ -30,16 +36,29 @@ router.get("/scan", (req, res) => {
     throw new Error(data.toString())
   })
 
-  evilscan.on('done', () => {
-    res.json(device)
+  await evilscan.on('done', async () => {
+    let result = []
+    for (i in device) {
+      let ip = device[i].ip
+      await axios.get(`http://${ip}`)
+      .then(response => {
+        if (!macInDB.includes(response.data.mac)) {
+          result.push(response.data)
+        }
+      })
+      .catch(err => {
+        result.push(err)
+      })
+    }
+    res.status(200).json(result)
   })
 
   evilscan.run();
 })
 
 router.post("/add", async (req, res) => {
-  const newDevice = await Device(req.body)
   try {
+    const newDevice = await Device(req.body)
     const savedDevice = await newDevice.save()
     res.status(200).json(savedDevice)
   } catch (err) {
@@ -47,18 +66,6 @@ router.post("/add", async (req, res) => {
   }
 })
 
-router.get("/detai/:ip", (req, res) => {
-  let ip = req.params.ip
-  axios.get(`http://${ip}`)
-  .then(response => {
-    res.json(response.data)
-  })
-  .catch(err => {
-    res.status(500).json(err)
-  })
-})
-
-// cập nhật kết nối đến giữa switch vs device
 router.put("/connect/:mac", async (req, res) => {
   try {
     let connects = req.body.connects
@@ -115,6 +122,12 @@ router.delete("/remove/:mac", async (req, res) => {
     const device = await Device.findOne({mac: mac})
     
     if(device) {
+      let con = device.connect
+      for (i in con) {
+        const subConDel = await Device.findOne({mac: con[i]})
+        let subCon = subConDel.connect.filter(x => x != mac)
+        await Device.findOneAndUpdate({mac: con[i]}, {connect: subCon})
+      }
       device.delete()
       res.status(200).json("deleted!")
     } else {

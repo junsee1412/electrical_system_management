@@ -5,7 +5,6 @@ express_ws(router)
 const Device = require("../models/Device.js")
 
 let map = new Map()
-let device_state = new Map()
 
 function getByValue(map, searchValue) {
     for (let [key, value] of map.entries()) {
@@ -19,43 +18,57 @@ router.ws("/", (ws, req) => {
     // console.log(req.headers['sec-websocket-protocol'])
     // console.log('--------------------------------')
     map.set(req.headers['sec-websocket-protocol'], ws)
-    device_state.set(req.headers['sec-websocket-protocol'], '')
-    ws.on("open", (event) => {
-        if (map.get("web")) {
-            map.get("web").send(arrayDEV.join(" "))
-        }
-        console.log("Connected !!")
-    })
-
+    // device_state.set(req.headers['sec-websocket-protocol'], '')
+    
     ws.on("message", async (msg) => {
         try {
-            let arrayDEV = []
-            let arrayDEV1 = []
             let arrayMSG = msg.split(" ")
-            
-            const device = await Device.findOne({mac: arrayMSG[0]})
-            if (device) {
+            let mapDev = new Map()
+            let arrayDEV = []
 
-                for(subAddr in device.connect) {
-                    const subDevice = await Device.findOne({mac: device.connect[subAddr]})
-                    
-                    arrayDEV = arrayDEV.concat(subDevice.connect, [device.connect[subAddr]])
+            if (arrayMSG.length == 2) {
+                const devices = await Device.find()
+                for(i in devices) {
+                    mapDev.set(devices[i].mac, devices[i].connect)
                 }
-                
-                map.forEach((value, key) => {
-                    if (arrayDEV.includes(key)) {
-                        value.send(arrayMSG[1])
-                        device_state.set(key, arrayMSG[1])
-                        arrayDEV1.push(key)
+
+                const device = await Device.findOne({mac: arrayMSG[0]})
+                if (device) {
+                    const searchConn = (macCon) => {
+                        if(!arrayDEV.includes(macCon)) {
+                            arrayDEV.push(macCon)
+                            valMapDev = mapDev.get(macCon)
+                            valMapDev.forEach(e => {
+                                searchConn(e)
+                            })                            
+                        }
                     }
-                });
-            }
-            arrayDEV1.push(arrayMSG[1])
-            console.log(arrayDEV1)
-            console.log(device_state)
-            
-            if (map.get("web")) {
-                map.get("web").send(arrayDEV1.join(" "))
+                    searchConn(device.mac)
+
+                    for(i in arrayDEV) {
+                        let state = new Boolean()
+                        if (arrayMSG[1] === 'ON') {
+                            state = true
+                        } else {
+                            state = false
+                        }
+
+                        await Device.findOneAndUpdate({mac: arrayDEV[i]}, {state: state})
+                    }
+
+                    map.forEach((value, key) => {
+
+                        if (arrayDEV.includes(key)) {
+                            value.send(arrayMSG[1])
+                        }
+                    })
+                }
+                if (map.get('web')) {
+                    const devices = await Device.find()
+                    map.get('web').send(JSON.stringify(devices))
+                }
+            } else {
+                console.log(msg)
             }
         } catch (err) {
             console.log(err)
@@ -65,7 +78,6 @@ router.ws("/", (ws, req) => {
     ws.on("close", (event) => {
         let key = getByValue(map, ws)
         map.delete(key)
-        device_state.delete(key)
         console.log('The connection has been closed successfully.')
     })
 })
