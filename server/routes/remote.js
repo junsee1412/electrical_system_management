@@ -5,6 +5,7 @@ express_ws(router)
 const Device = require("../models/Device.js")
 
 let map = new Map()
+let webcl = []
 
 function getByValue(map, searchValue) {
     for (let [key, value] of map.entries()) {
@@ -15,10 +16,14 @@ function getByValue(map, searchValue) {
 }
 
 router.ws("/", (ws, req) => {
-    // console.log(req.headers['sec-websocket-protocol'])
-    // console.log('--------------------------------')
-    map.set(req.headers['sec-websocket-protocol'], ws)
-    // device_state.set(req.headers['sec-websocket-protocol'], '')
+    let header = req.headers['sec-websocket-protocol'].split(', ')
+    if (header.length === 2) {
+        let key = header.join('_')
+        webcl.push(key)
+        map.set(key, ws)
+    } else {
+        map.set(header.toString(), ws)
+    }
     
     ws.on("message", async (msg) => {
         try {
@@ -57,15 +62,22 @@ router.ws("/", (ws, req) => {
                     }
 
                     map.forEach((value, key) => {
-
-                        if (arrayDEV.includes(key)) {
-                            value.send(arrayMSG[1])
+                        try {
+                            if (arrayDEV.includes(key)) {
+                                value.send(arrayMSG[1])
+                            }
+                        } catch (error) {
+                            console.log(error)
                         }
                     })
                 }
-                if (map.get('web')) {
-                    const devices = await Device.find()
-                    map.get('web').send(JSON.stringify(devices))
+                const afterUpdate = await Device.find()
+                for (i in webcl) {
+                    try {
+                        map.get(webcl[i]).send(JSON.stringify(afterUpdate))
+                    } catch (error) {
+                        console.log(error)
+                    }
                 }
             } else {
                 console.log(msg)
@@ -75,10 +87,14 @@ router.ws("/", (ws, req) => {
         }
     })
 
-    ws.on("close", (event) => {
+    ws.on("close", () => {
         let key = getByValue(map, ws)
+        let index = webcl.indexOf(key)
+        if (index !== -1) {
+            webcl.splice(index, 1)
+        }
         map.delete(key)
-        console.log('The connection has been closed successfully.')
+        console.log(`The ${key} has been closed successfully.`)
     })
 })
 

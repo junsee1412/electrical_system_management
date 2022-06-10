@@ -41,10 +41,21 @@ export default {
   methods: {
     detailDev: function(index) {
       this.index = index
-    }
+    },
+    makeID: function(length) {
+      let result = '';
+      let characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+      let charactersLength = characters.length;
+      for ( let i = 0; i < length; i++ ) {
+        result += characters.charAt(Math.floor(Math.random() * 
+        charactersLength));
+      }
+      return result;
+    },
   },
   created: async function() {
-    this.socket = await new WebSocket('ws://localhost:3000/ws', 'web')
+    let ip = '192.168.1.26'
+    this.socket = await new WebSocket(`ws://${ip}:3000/ws`, ['vuejs', this.makeID(10)])
 
     this.socket.onopen = () => {
       console.log("Connected")

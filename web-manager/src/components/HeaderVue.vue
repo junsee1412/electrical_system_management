@@ -13,7 +13,7 @@
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modalCenterTitle">Modal title</h5>
+          <h5 class="modal-title" id="modalCenterTitle">Scan Module</h5>
           <button v-on:click="clearRes()" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
         </div>
         <div class="modal-body">
@@ -26,7 +26,10 @@
               <i v-if="outDevBD.type === 'switch'" class="bx bx-toggle-left me-2"></i>
               <i v-else class="bx bx-bulb me-2"></i>
               {{ outDevBD.mac }}
-              <button v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+              <span>
+                <small><a :href="'http://' + outDevBD.ip" target="_blank" rel="noopener noreferrer">{{ outDevBD.ip }}</a></small>
+              </span>
+              <button v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type, state: outDevBD.state ? true : false})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
             </li>
           </ul>
         </div>

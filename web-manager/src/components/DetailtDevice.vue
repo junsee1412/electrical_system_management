@@ -1,7 +1,7 @@
 <template>
   <div class="card shadow">
     <div class="card-body">
-      <h5 class="card-title">Detailt</h5>
+      <h5 class="card-title">Detailt Module</h5>
       <div v-if="devices[index]">
         <p class="card-text">MAC Address: <span>{{ devices[index].mac }}</span></p>
         <p class="card-text">Type: <span>{{ devices[index].type }}</span></p>
@@ -24,7 +24,7 @@
       <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
           <div class="modal-header">
-            <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+            <h5 class="modal-title" id="exampleModalLabel">Connect Module</h5>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div class="modal-body">

@@ -28,8 +28,10 @@ const Device = require("./models/Device.js")
 ep_wss.getWss().on('connection', async (ws, req) => {
 
   header = req.headers['sec-websocket-protocol']
-  console.log(`${header} connected !!`)
-  if (header === 'web') {
+  // console.log(`${header} connected !!`)
+
+  let arrayHeader = header.split(', ')
+  if (arrayHeader.length === 2) {
     try {
       const devices = await Device.find()
       ws.send(JSON.stringify(devices))
