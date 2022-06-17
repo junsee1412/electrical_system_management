@@ -54,7 +54,7 @@ export default {
     },
   },
   created: async function() {
-    let ip = '192.168.1.26'
+    let ip = '192.168.1.252'
     this.socket = await new WebSocket(`ws://${ip}:3000/ws`, ['vuejs', this.makeID(10)])
 
     this.socket.onopen = () => {

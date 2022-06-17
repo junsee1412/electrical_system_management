@@ -4,8 +4,8 @@ export default{
     getList() {
         return API().get('/devices')
     },
-    scanDevices() {
-        return API().get('/devices/scan')
+    scanDevices(con) {
+        return API().get('/devices/scan', {params: {con: con}})
     },
     addDevices(data) {
         return API().post('/devices/add', data)

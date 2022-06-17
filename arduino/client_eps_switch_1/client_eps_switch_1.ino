@@ -16,8 +16,8 @@ String content;
 const uint16_t port = 3000;
 const char* path = "/ws";
 
-const int sw = 0;
-const int led2 = 2;
+const int sw = 2;
+const int led2 = 0;
 int state = 0;
 String type = "switch";
 

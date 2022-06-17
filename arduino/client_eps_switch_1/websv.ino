@@ -35,7 +35,7 @@ void clearPage() {
   }
   EEPROM.commit();
  
-  content = "{\"Success\":\"Clear... reset to boot into new wifi\"}";
+  content = "{\"message\":\"Clear... reset to boot into new wifi\"}";
   statusCode = 200;
   server.sendHeader("Access-Control-Allow-Origin", "*");
   server.send(statusCode, "application/json", content);
@@ -84,14 +84,15 @@ void settingPage() {
     }
     EEPROM.commit();
  
-    content = "{\"Success\":\"saved to eeprom... reset to boot into new wifi\"}";
+    content = "{\"message\":\"saved to eeprom... reset to boot into new wifi\"}";
     statusCode = 200;
     server.sendHeader("Access-Control-Allow-Origin", "*");
     server.send(statusCode, "application/json", content);
+    delay(1000);
     ESP.reset();
     return;
   } else {
-    content = "{\"Error\":\"404 not found\"}";
+    content = "{\"message\":\"404 not found\"}";
     statusCode = 404;
     Serial.println("Sending 404");
   }

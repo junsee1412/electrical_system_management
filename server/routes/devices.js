@@ -14,6 +14,7 @@ router.get("/", async (req, res) => {
 })
 
 router.get("/scan", async (req, res) => {
+  let con = req.query.con
   const inDB = await Device.find()
   let macInDB = []
   for (i in inDB) {
@@ -42,12 +43,17 @@ router.get("/scan", async (req, res) => {
       let ip = device[i].ip
       await axios.get(`http://${ip}`)
       .then(response => {
-        if (!macInDB.includes(response.data.mac)) {
+        if (!macInDB.includes(response.data.mac) && con != "true") {
+          result.push(response.data)
+        } 
+        if (macInDB.includes(response.data.mac) && con === "true") {
           result.push(response.data)
         }
       })
       .catch(err => {
-        result.push(err)
+        if (con === "true") {
+          result.push(err)
+        }
       })
     }
     res.status(200).json(result)

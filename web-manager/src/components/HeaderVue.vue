@@ -5,7 +5,10 @@
         <img src="/favicon.png" alt="" width="30" height="30" class="d-inline-block align-text-top">
         DT Manager
       </a>
-      <button v-on:click="pushScan()" class="btn btn-outline-success d-flex" data-bs-toggle="modal" data-bs-target="#modalCenter" >Scan</button>
+      <div class="d-flex">
+        <button v-on:click="pushScan('false')" class="btn btn-outline-success me-2" data-bs-toggle="modal" data-bs-target="#modalCenter" ><i class='bx bx-message-square-add'></i></button>
+        <button v-on:click="pushScan('true')" class="btn btn-outline-info" data-bs-toggle="modal" data-bs-target="#modalCenter" ><i class="bx bx-sitemap"></i></button>
+      </div>
     </div>
   </nav>
   <!-- Modal -->
@@ -29,7 +32,7 @@
               <span>
                 <small><a :href="'http://' + outDevBD.ip" target="_blank" rel="noopener noreferrer">{{ outDevBD.ip }}</a></small>
               </span>
-              <button v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type, state: outDevBD.state ? true : false})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+              <button v-if="bol==='false'" v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type, state: outDevBD.state ? true : false})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
             </li>
           </ul>
         </div>
@@ -51,6 +54,7 @@ export default{
   data: () => {
     return {
       response: [],
+      scanmode: '',
     }
   },
   methods: {
@@ -62,8 +66,9 @@ export default{
       this.$root.devices.push(newDev.data)
       this.clearRes()
     },
-    pushScan: async function() {
-      const res = await apiDevices.scanDevices()
+    pushScan: async function(bol) {
+      this.scanmode = bol
+      const res = await apiDevices.scanDevices(bol)
       this.response = res.data
     },
   },
