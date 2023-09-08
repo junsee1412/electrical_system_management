@@ -32,7 +32,7 @@
               <span>
                 <small><a :href="'http://' + outDevBD.ip" target="_blank" rel="noopener noreferrer">{{ outDevBD.ip }}</a></small>
               </span>
-              <button v-if="bol==='false'" v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type, state: outDevBD.state ? true : false})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
+              <button v-if="bol != 'true'" v-on:click="addNew({mac: outDevBD.mac, type: outDevBD.type, state: outDevBD.state ? true : false})" class="btn btn-primary" data-bs-dismiss="modal">Add</button>
             </li>
           </ul>
         </div>

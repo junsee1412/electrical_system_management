@@ -16,7 +16,7 @@ const devicesRouter = require('./routes/devices.js')
 const remoteRouter = require('./routes/remote.js')
 
 app.use(express.json())
-mongoose.connect("mongodb://junsee:jun1412@127.0.0.1:27017/IoT?authSource=admin")
+mongoose.connect("mongodb://junsee:jun147@127.0.0.1:27017/IoT?authSource=admin")
 .then(console.log("Connected to MongoDB"))
 .catch((err) => console.log(err))
 
@@ -28,7 +28,7 @@ const Device = require("./models/Device.js")
 ep_wss.getWss().on('connection', async (ws, req) => {
 
   header = req.headers['sec-websocket-protocol']
-  // console.log(`${header} connected !!`)
+  console.log(`${header} connected !!`)
 
   let arrayHeader = header.split(', ')
   if (arrayHeader.length === 2) {
